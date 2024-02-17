@@ -14,68 +14,77 @@
  *
  */
 
-var fs = require('fs');
+const fs = require('fs');
+const path = require('path');
+const optimist = require('optimist');
+const unused = require('../');
 
-var optimist = require('optimist')
+const argv = optimist
     .usage('Usage: unused [--ignore-params <param 1,param 2,param n..>] <file 1> <file 2> <file n>')
     .string('ignore-params')
-    .describe('ignore-params', 'comma separated list of unused function parameters to ignore');
-var argv = optimist.argv;
-
-var unused = require('../');
+    .describe('ignore-params', 'comma separated list of unused function parameters to ignore')
+    .argv;
 
 if (argv.help || argv._.length === 0) {
-    console.log(optimist.help())
+    console.info(optimist.help())
     process.exit(1);
 }
 
-var ignore_params = (argv['ignore-params'] || '').split(',');
+const ignoreParams = (argv['ignore-params'] || '').split(',');
 
-var errors = 0;
-argv._.forEach(function(path) {
-
+let errors = 0;
+argv._.forEach(function(filePath) {
     try {
-        var unused_vars = unused(fs.readFileSync(path, 'utf8'));
-    }
-    catch (e) {
-        return console.dir(e);
-    }
-
-    // sort by line number
-    unused_vars.sort(function(left, right) {
-        return left.loc.line - right.loc.line;
-    });
-
-    unused_vars = unused_vars.filter(function(variable) {
-        if (variable.param && ignore_params.indexOf(variable.name) >= 0) {
-            return false;
+        if (fs.existsSync(filePath)) {
+            const stats = fs.statSync(filePath);
+            if (stats.isDirectory()) {
+                // If it's a directory, iterate over files within it
+                fs.readdirSync(filePath).forEach(function(file) {
+                    const fullPath = path.join(filePath, file);
+                    processFile(fullPath);
+                });
+            } else if (stats.isFile()) {
+                // If it's a file, process it directly
+                processFile(filePath);
+            } else {
+                console.error(`${filePath} is neither a file nor a directory.`);
+                errors++;
+            }
+        } else {
+            console.error(`${filePath} does not exist.`);
+            errors++;
         }
-
-        return true;
-    });
-
-    // only show the path if there are unused variables
-    // silent otherwise
-    if (unused_vars.length > 0) {
-        console.log(path);
+    } catch (e) {
+        console.error(`Error processing ${filePath}:`, e);
+        errors++;
     }
-
-    unused_vars.forEach(function(variable) {
-        if (variable.param && ignore_params.indexOf(variable.name) >= 0) {
-            return;
-        }
-
-        console.log('\t%s - on line %s', variable.name, variable.loc.line);
-    });
-
-    errors += unused_vars.length;
 });
 
-// exit with -1 to indicate unused vars exist
-// useful if used as a git commit hook or other script to detect failure
-// failure is defined by the existence of unused variables
+// Exit with -1 to indicate unused vars exist
 if (errors > 0) {
     process.exit(-1);
 }
 
+function processFile(filePath) {
+    const unusedVars = unused(fs.readFileSync(filePath, 'utf8'));
+    const filteredVars = unusedVars.filter(variable => !(variable.param && ignoreParams.includes(variable.name))).sort(function(left, right) {
+        return left.loc.line - right.loc.line;
+    });
+
+    // Only show the path if there are unused variables
+    if (filteredVars.length > 0) {
+        console.log(`\x1b[95m ${filePath} \x1b[0m`)
+        filteredVars.forEach(variable => {
+            if (variable.param && ignoreParams.indexOf(variable.name) >= 0) {
+                return;
+            }
+            console.log(`\x1b[91m \t${variable.name}\x1b[0m - on \x1b[92m line ${variable.loc.line} \x1b[0m`);
+        });
+    } else {
+        console.log(`\x1b[95m ${filePath} \x1b[0m`)
+        console.log('\x1b[33m You\'re putting all of your variables to use in this file! \x1b[0m')
+    }
+
+    errors += filteredVars.length;
+}
 // vim: ft=javascript
