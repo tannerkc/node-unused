@@ -1,7 +1,7 @@
 {
   "name": "reveal-unused",
   "description": "A module which reports unused variables in your code.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Tanner Cottle http://www.tannercottle.com",
   "keywords": [
     "unused",
@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
-    "@babel/traverse": "^7.23.9",
     "fs": "^0.0.1-security",
     "optimist": "0.6.0",
     "path": "^0.12.7"
