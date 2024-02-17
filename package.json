@@ -1,5 +1,5 @@
 {
-  "name": "unused",
+  "name": "unused-js",
   "description": "A module which reports unused variables in your code.",
   "version": "0.3.0",
   "author": "Tanner Cottle http://www.tannercottle.com",
