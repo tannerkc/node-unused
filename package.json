@@ -2,7 +2,7 @@
   "name": "unused",
   "description": "A module which reports unused variables in your code.",
   "version": "0.3.0",
-  "author": "Tomaz Muraus <tomaz+npm@tomaz.me> http://www.tomaz.me",
+  "author": "Tanner Cottle http://www.tannercottle.com",
   "keywords": [
     "unused",
     "variables",
@@ -10,10 +10,10 @@
     "unused variables",
     "unused imports"
   ],
-  "homepage": "https://github.com/Kami/node-unused",
+  "homepage": "https://github.com/tannerkc/node-unused",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Kami/node-unused.git"
+    "url": "git://github.com/tannerkc/node-unused.git"
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
