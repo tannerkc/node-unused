@@ -1,7 +1,7 @@
 {
   "name": "unused",
   "description": "A module which reports unused variables in your code.",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": "Tomaz Muraus <tomaz+npm@tomaz.me> http://www.tomaz.me",
   "keywords": [
     "unused",
@@ -16,8 +16,11 @@
     "url": "git://github.com/Kami/node-unused.git"
   },
   "dependencies": {
+    "@babel/parser": "^7.23.9",
+    "@babel/traverse": "^7.23.9",
+    "fs": "^0.0.1-security",
     "optimist": "0.6.0",
-    "esprima": "1.0.0"
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "mocha": "1.6.0"
