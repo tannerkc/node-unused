@@ -2,6 +2,8 @@
 
 Identify unused variables in your javascript code.
 
+This is a modernization of https://github.com/Kami/node-unused
+
 ## cli
 
 `reveal-unused` works with single files, directories or listed files
