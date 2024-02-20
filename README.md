@@ -2,7 +2,7 @@
 
 Identify unused variables in your javascript code.
 
-This is a modernization of https://github.com/Kami/node-unused
+This is a modernization of https://github.com/Kami/node-unused to support ES6, as well as directories.
 
 ## cli
 
